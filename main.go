@@ -7,10 +7,18 @@
 // ! 7. Arrays - Slices
 // ! 8. Mapas -> { "llave": "valor"}
 // ! 9. Clases - Structs
+// ! 10. Punteros, Punteros en Structs y Outputs personalizables de Struct
+// ! 11. Interfaces y lista de Interfases
+// ! 12. GoRoutines
 
 package main
 
-import "fmt"
+import (
+	"custontext"
+	"fmt"
+	hl "go_pru1/hola"
+	"sync"
+)
 
 func main() {
 	fmt.Printf("\n")
@@ -157,10 +165,14 @@ func main() {
 		fmt.Println("No cumple condiciones")
 	}
 
+	fmt.Print("\n\n")
+
 	// ! 6. Keywords
 	defer fmt.Println("un DEFER cualquiera... Fin")
 	fmt.Println("KeyWord DEFER - Activada")
 	// ? break - continue -> Control de bucles
+
+	fmt.Print("\n\n")
 
 	// ! 7. Arrays - Slices
 	// * Declaración
@@ -196,6 +208,8 @@ func main() {
 
 	isPalidromo("ana") // Función para reconocer palabras palindromas [roma]
 
+	fmt.Print("\n\n")
+
 	// ! 8. Mapas
 	m := make(map[string]int) // Definición
 	m["Josecito"] = 14
@@ -212,17 +226,148 @@ func main() {
 	valor, ok := m["Josse"]
 	fmt.Println("Existe llave?", ok, valor)
 
-	// ! 9. Strucks - class
-	var myCar car = car{marca: "Toyota", modelo: 2022}
+	fmt.Print("\n\n")
+
+	// ! 9. Structs - class
+	// Struct local
+	var myCar car = car{marca: "Toyota", modelo: 2022} // STRUCT LOCAL
 	fmt.Println(myCar)
-	// troCar := mypackage.CarPublic{mymarca: "Tesla"}
-	// fmt.Println(otroCar)
+
+	// Struct en otro archivo del proyecto
+	var holis hl.Hola = hl.Hola{Saludo: "Hola", Despedida: "Adios"} // STRUCT PROJECT
+	fmt.Println(holis)
+	hl.Impresion("Uso de struct en diferente archivo del proyecto - Función")
+
+	// Modulo en src - GOROOT - Package [Fabricación propia]
+	fmt.Println("custontext: ", custontext.WhoSaidTea)
+	var salu custontext.MensajePublicoModulo = custontext.MensajePublicoModulo{Mensaje: "Buen día", Dia: 23, Mes: 8, Año: 2022}
+	fmt.Println(salu)
+
+	fmt.Print("\n\n")
+
+	// ! 10. Punteros [ & accede a direccion --- * accede a valor]
+	// ! 10. Punteros, Punteros en Structs y Outputs personalizables de Struct
+
+	aa := 50  // Valor
+	bb := &aa // Variable que guarda la dirección en memoria de aa
+	fmt.Println("Valor:", aa, "Dirección", bb, "ValorDir", *bb)
+	// Cambiando el valor de aa
+	*bb = 100
+	fmt.Println("aa Cambiado:", aa)
+	// Se crea un Struct - PC
+	myPc := pc{ram: 16, disk: 200, marca: "msi"}
+	myPc2 := pc{ram: 8, disk: 100, marca: "King"}
+	fmt.Println("Normal: ", myPc)
+	fmt.Print("\n")
+	// ? AGREGAMOS UNA FUNCION A UN STRUCT
+	myPc.ping() // Usamos una función de un struct
+	myPc.duplicateRam()
+	myPc2.duplicateRam()
+	fmt.Println("Dupli x2", myPc)
+	myPc.duplicateRam()
+	fmt.Println("Dupli x4", myPc)
+	fmt.Println("Dupli x2", myPc2)
+	// ? OUTPUTS DE STRUCT
+	// Se crea una función que devuelva un struct [customizado]
+	fmt.Println(myPc.String())  // Salida 1
+	fmt.Println(myPc2.String()) // Salida 2
+
+	fmt.Print("\n\n")
+
+	// ! 11. Interfaces y lista de Interfases
+	myCuadrado := cuadrado{base: 2}
+	fmt.Println("Cuadrado:", myCuadrado)
+	myRectangulo := rectangulo{base: 2, altura: 4}
+	fmt.Println("Rectangulo:", myRectangulo)
+	calculate(myCuadrado)
+	calculate(myRectangulo)
+	// lista de interfaces
+	myInterfaces := []interface{}{1, "hola", 3.1416}
+	fmt.Println(myInterfaces...)
+
+	fmt.Print("\n\n")
+
+	// ! 12. GoRoutines
+	var wg sync.WaitGroup
+
+	// say("Hola mundo")   // consumo funcion normalmente
+	wg.Add(1)
+	go say("Ya llegue", &wg) // consumo de función con GoRoutine
+	// time.Sleep(time.Millisecond * 500)
+	wg.Wait()
 }
+
+///
+///
+///
+///
+///
+///
+///
+
+func say(text string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	fmt.Println("Salida say:", text)
+}
+
+///
+///
+
+type figuras2D interface { // INTERFACE
+	area() float64
+}
+
+type cuadrado struct {
+	base float64
+}
+
+func (c cuadrado) area() float64 {
+	return c.base * c.base
+}
+
+type rectangulo struct {
+	base   float64
+	altura float64
+}
+
+func (r rectangulo) area() float64 {
+	return r.base * r.altura
+}
+
+func calculate(f figuras2D) { //
+	fmt.Println("Area:", f.area())
+}
+
+///
+///
+
+type pc struct {
+	ram   int
+	disk  int
+	marca string
+}
+
+// FUNCIÓN PARA PC
+func (elPc pc) ping() {
+	fmt.Println(elPc.marca, "Pong - [METODO - FUNC]")
+}
+func (elPc *pc) duplicateRam() { // Accedemos a los valores del struct que me entregan en la func
+	elPc.ram = elPc.ram * 2
+}
+func (elPc pc) String() string { // SALIDA CUSTOMIZABLE DE UN STRUCT
+	return fmt.Sprintf("Tengo %d GB RAM, %d GB de MEMORIA y es un %s", elPc.ram, elPc.disk, elPc.marca)
+}
+
+///
+///
 
 type car struct {
 	marca  string
 	modelo int
 }
+
+///
+///
 
 func isPalidromo(text string) {
 	var textReverse string
@@ -235,6 +380,9 @@ func isPalidromo(text string) {
 		fmt.Println(text, "no es palindromo")
 	}
 }
+
+///
+///
 
 func bucles() {
 	fmt.Printf(".")
