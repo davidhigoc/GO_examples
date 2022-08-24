@@ -2,7 +2,7 @@ package main
 
 func main() {
 	server := NewServer(":3000")
-	server.Handle("/", handleRoot)
-	server.Handle("/api", HandleHome)
+	server.Handle("GET", "/", handleRoot)
+	server.Handle("POST", "/api", HandleHome)
 	server.Listen()
 }
