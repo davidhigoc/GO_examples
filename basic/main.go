@@ -16,7 +16,7 @@ package main
 import (
 	"custontext"
 	"fmt"
-	hl "go_pru1/hola"
+	hl "go_pru1/basic/hola"
 	"sync"
 )
 
