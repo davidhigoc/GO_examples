@@ -21,9 +21,6 @@ type InterfaceGeneral interface {
 }
 
 type HandlerGeneralStruct struct {
-	Id     string
-	Nombre string
-	Edad   int
 }
 
 // CONSTRUCTOR DE INTERFACE
@@ -36,10 +33,19 @@ func (h HandlerGeneralStruct) HandlerGene(w http.ResponseWriter, r *http.Request
 	switch r.Method {
 	case get:
 		fmt.Println("petición Get-ON")
-		json.NewEncoder(w).Encode(get)
+		m := make(map[string][]string)
+		fmt.Println(m)
+		slice := []string{"Pedro", "Benito", "Dolores", "Cantasia", "Sexto"}
+		m["Users"] = append(m["Users"], slice...)
+		json.NewEncoder(w).Encode(m)
 	case post:
+		m := make(map[string]interface{})
+		slice := []string{"Pedro", "Benito", "Dolores", "Cantasia", "Sexto"}
+		m["Users"] = slice
+		m["Estations"] = []string{"Verano", "Invierno", "Otoño", "Primavera"}
+		m["Version"] = 1
 		fmt.Println("petición Post-ON")
-		json.NewEncoder(w).Encode(post)
+		json.NewEncoder(w).Encode(m)
 	case put:
 		fmt.Println("petición Put-ON")
 		json.NewEncoder(w).Encode(put)
